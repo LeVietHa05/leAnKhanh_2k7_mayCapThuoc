@@ -5,8 +5,16 @@
     "role": "user",
     "name": "Nguyen Van A",
     "khoang": 1,
-    "drugs": ["Paracetamol", "Carbocistein 250mg", "Clorpheniramin 4mg"],
-    "time": ["8:00", "12:00", "18:00", "22:00", "6:00", "10:00", "16:00"]
+    "drugs": [
+      "Januvia 100mg",
+      "Paracetamol",
+      "Exfort 5/80",
+      "Carbocistein 250mg",
+      "Clorpheniramin 4mg"
+    ],
+    "numofdrugs": [2, 2, 2],
+    "time": ["8:00", "12:00", "18:00", "22:00", "6:00", "10:00", "16:00"],
+    "uid": "4255969536"
   },
   {
     "username": "user2",
@@ -14,8 +22,16 @@
     "role": "user",
     "name": "Nguyen Van B",
     "khoang": 2,
-    "drugs": ["Januvia 100mg", "Jardiance 10", "Exfort 5/80"],
-    "time": ["18:00", "10:00", "14:00", "22:00", "16:00", "7:00", "9:00"]
+    "drugs": [
+      "Januvia 100mg",
+      "Paracetamol",
+      "Exfort 5/80",
+      "Carbocistein 250mg",
+      "Clorpheniramin 4mg"
+    ],
+    "numofdrugs": [0, 1, 2],
+    "time": ["18:00", "10:00", "14:00", "22:00", "16:00", "7:00", "9:00"],
+    "uid": "3388141568"
   },
   {
     "username": "user3",
@@ -23,8 +39,16 @@
     "role": "user",
     "name": "Nguyen Van C",
     "khoang": 3,
-    "drugs": ["Aspirin 81mg 10x10's", "Neuontin 300 mg", "Milurit 300mg"],
-    "time": ["8:00", "14:00", "18:00", "22:00", "6:00", "10:00", "7:00"]
+    "drugs": [
+      "Januvia 100mg",
+      "Paracetamol",
+      "Exfort 5/80",
+      "Carbocistein 250mg",
+      "Clorpheniramin 4mg"
+    ],
+    "numofdrugs": [3, 0, 1],
+    "time": ["8:00", "14:00", "18:00", "22:00", "6:00", "10:00", "7:00"],
+    "uid": "1930039808"
   },
   {
     "username": "user4",
@@ -32,8 +56,16 @@
     "role": "user",
     "name": "Nguyen Thi D",
     "khoang": 4,
-    "drugs": ["Plavix 75mg", "Yumangel F", "Levothyrox 50mcg 3x10's"],
-    "time": ["8:00", "15:00", "13:00", "23:00", "8:00", "10:00", "6:00"]
+    "drugs": [
+      "Januvia 100mg",
+      "Paracetamol",
+      "Exfort 5/80",
+      "Carbocistein 250mg",
+      "Clorpheniramin 4mg"
+    ],
+    "numofdrugs": [1, 1, 3],
+    "time": ["8:00", "15:00", "13:00", "23:00", "8:00", "10:00", "6:00"],
+    "uid": "33878016"
   },
   {
     "username": "user5",
@@ -41,8 +73,16 @@
     "role": "user",
     "name": "Nguyen Thi E",
     "khoang": 5,
-    "drugs": ["Telfast HD 180mg", "Ryzodeg B/100ml", "Cardioton 3x10's"],
-    "time": ["8:00", "14:00", "18:00", "22:00", "6:00", "10:00", "7:00"]
+    "drugs": [
+      "Januvia 100mg",
+      "Paracetamol",
+      "Exfort 5/80",
+      "Carbocistein 250mg",
+      "Clorpheniramin 4mg"
+    ],
+    "numofdrugs": [1, 0, 2],
+    "time": ["8:00", "14:00", "18:00", "22:00", "6:00", "10:00", "7:00"],
+    "uid": "3730108416"
   },
   {
     "username": "user6",
@@ -50,7 +90,15 @@
     "role": "user",
     "name": "Nguyen Thi F",
     "khoang": 6,
-    "drugs": ["Alphachoay", "Sanlein 0.1 %", "Verospiron 25 mg"],
-    "time": ["18:00", "10:00", "14:00", "22:00", "16:00", "7:00", "9:00"]
+    "drugs": [
+      "Januvia 100mg",
+      "Paracetamol",
+      "Exfort 5/80",
+      "Carbocistein 250mg",
+      "Clorpheniramin 4mg"
+    ],
+    "numofdrugs": [2, 0, 2],
+    "time": ["18:00", "10:00", "14:00", "22:00", "16:00", "7:00", "9:00"],
+    "uid": "6"
   }
 ]

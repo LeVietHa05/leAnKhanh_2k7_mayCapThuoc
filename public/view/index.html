@@ -5,14 +5,18 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bè Thông Minh</title>
-  <meta name="description" content="For monitoring the quality of water in HCM city">
+  <title>Thiết bị cấp thuốc thông minh</title>
+  <meta name="description" content="Thiết bị cấp thuốc thông minh">
   <link rel="stylesheet" href="stylesheets/style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
   <!-- CSS only -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous" />
   <style>
+    html {
+      font-size: 18px;
+    }
+
     body {
       min-height: 100vh;
       background: linear-gradient(to bottom left, #f5bd2b, #dbef8d, #bcf166, #cfffee, #5bf3c6, #b5ffff);
@@ -21,7 +25,7 @@
 
     main {
       backdrop-filter: blur(3px);
-      background: rgb(255, 255, 255, 0.7);
+      background: rgb(255, 255, 255, 0.8);
       box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.23);
     }
   </style>
@@ -29,7 +33,7 @@
 
 <body class="d-flex justify-content-center align-items-center">
   <div class="container">
-    <main style="max-width: 600px; min-height: 95vh; min-width: 500px" class="m-auto rounded-4 p-3">
+    <main style="max-width: 1300px; min-height: 50vh; min-width: 600px" class="m-auto rounded-4 p-3">
       <h1 class="text-center">Thiết bị cấp thuốc thông minh</h1>
       <div id="hello_js" class="mb-3 h4">xin chao, user1 (placeholder)</div>
       <div id="timeTable">
@@ -45,6 +49,7 @@
       </div>
       <div id="danhSachThuoc">
         <div class="h6">Trong lần uống thuốc này, bạn sẽ uống các loại thuốc sau: </div>
+        (Lưu ý: chỉ mang tính chất minh họa)
         <ul id="listDrug_js">
           <li><b>Paracetamol</b></li>
           <li><b>Carbocistein 250mg</b></li>
@@ -54,10 +59,10 @@
       <div id="tutorial">
         <div class="h6">Hướng dẫn lấy thuốc</div>
         <ul>
-          <li>Đầu tiên là sử dụng trang web này, nhấn vào <button type="button" id="btn_open_Khoang_js"
-              class="btn btn-light">đây</button></li> và chờ một vài giây để máy cấp thuốc xoay đến ô của bạn.
-          <li>Thứ hai là sử dụng bộ thẻ đã được cấp: Chạm thẻ vào vùng quét, sau đó đặt ngón tay đã tạo vân tay trước đó
-            vào cảm biến vân tay. Cuối cùng là chờ một vài giây để máy cấp thuốc xoay đến ô của bạn.</li>
+          <li>Thứ nhất: Sử dụng trang web này, nhấn vào <button type="button" id="btn_open_Khoang_js"
+              class="btn btn-light">đây</button> và chờ một vài giây để máy cấp thuốc xoay đến ô của bạn.</li>
+          <li>Thứ hai: Sử dụng bộ thẻ đã được cấp: Chạm thẻ vào vùng quét và chờ một vài giây để máy cấp thuốc xoay đến
+            ô của bạn.</li>
         </ul>
       </div>
     </main>
@@ -71,6 +76,8 @@
   <!-- socket -->
   <script src="../socket.io/socket.io.js"></script>
   <script>
+
+    let str = "";
     var socket = io();
 
     const control = {
@@ -86,7 +93,8 @@
       e.preventDefault();
       control.open = 1;
       // control.khoang = 1; //khoang da duoc cap nhat khi nguoi dung dang nhap
-      socket.emit("/web/control", control);
+      socket.emit("/esp/new-card-found", { uid: str });
+      // socket.emit("/web/control", { uid: str });
       control.open = 0;
     });
 
@@ -114,6 +122,7 @@
       .then(res => res.json())
       .then(data => {
         console.log(data);
+        str = data.uid;
         hello_js.innerHTML = `Xin chào, ${data.name}!`;
         control.khoang = data.khoang;
         listDrug_js.innerHTML = "";
