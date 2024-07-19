@@ -1,4 +1,6 @@
 
+const fs = require('fs');
+
 const option = {
     allowEIO3: true,
     cors: {
@@ -15,8 +17,7 @@ const socketapi = {
     io: io
 }
 
-const { get } = require("./routes");
-const user = require('./user.json')
+const user = JSON.parse(fs.readFileSync('user.json', 'utf8'));
 
 io.on("connection", (socket) => {
     console.log("[INFO] new connection: [" + socket.id + "]");

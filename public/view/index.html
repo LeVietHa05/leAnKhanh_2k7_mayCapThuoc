@@ -43,6 +43,7 @@
             <tr>
               <th scope="col">Thứ</th>
               <th scope="col">Giờ</th>
+              <th scope="col">...</th>
             </tr>
           </thead>
         </table>
@@ -135,18 +136,61 @@
           if (i != 6) {
             tr.innerHTML = `
               <th scope="row">Thứ ${i + 2}</th>
-              <td>${data.time[i]}</td>
+              <td><input id="inputValue${i}" value="${data.time[i]}" disabled></td>
+              <td><button id="edit${i}" >Edit </button>  <button id="save${i}" class="d-none">Save </button></td>
             `;
             tbody.appendChild(tr);
           } else {
             tr.innerHTML = `
               <th scope="row">Chủ nhật</th>
-              <td>${data.time[i]}</td>`;
+              <td><input id="inputValue${i}" value="${data.time[i]}" disabled></td>
+              <td><button id="edit${i}" >Edit </button>  <button id="save${i}" class="d-none">Save </button></td>`;
             tbody.appendChild(tr);
           }
         }
         timeTable_js.appendChild(tbody);
+        const edits = document.querySelectorAll('[id^="edit"]');
+        const saves = document.querySelectorAll('[id^="save"]');
+        const inputValue = document.querySelectorAll('[id^="inputValue"]');
+        edits.forEach((edit, index) => {
+          edit.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log(index);
+            saves[index].classList.remove('d-none');
+            inputValue[index].disabled = false;
+          });
+        });
+
+        saves.forEach((save, index) => {
+          save.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log(index);
+            saves[index].classList.add('d-none');
+            inputValue[index].disabled = true;
+            //post the data back to server using fetch
+            let url = "/changeTime" + "?" + window.location.href.split('?')[1];
+            fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                uid: str,
+                index: index,
+                time: inputValue[index].value
+              }),
+            })
+              .then(response => response.json())
+              .then(data => {
+                console.log('Success:', data);
+              })
+              .catch((error) => {
+                console.error('Error:', error);
+              });
+          });
+        });
       })
+
   </script>
 </body>
 
