@@ -17,7 +17,12 @@ const socketapi = {
     io: io
 }
 
-const user = JSON.parse(fs.readFileSync('user.json', 'utf8'));
+let user = JSON.parse(fs.readFileSync('user.json', 'utf8'));
+//watch changes in user.json
+fs.watchFile('user.json', (curr, prev) => {
+    console.log("user.json changed");
+    user = JSON.parse(fs.readFileSync('user.json', 'utf8'));
+})
 
 io.on("connection", (socket) => {
     console.log("[INFO] new connection: [" + socket.id + "]");

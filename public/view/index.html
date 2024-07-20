@@ -131,20 +131,30 @@
           listDrug_js.innerHTML += `<li><b>${drug}</b></li>`;
         });
         const tbody = document.createElement('tbody');
+        console.log(data.time);
+        console.log(data.time.length);
         for (let i = 0; i < data.time.length; i++) {
           const tr = document.createElement('tr');
           if (i != 6) {
             tr.innerHTML = `
               <th scope="row">Thứ ${i + 2}</th>
-              <td><input id="inputValue${i}" value="${data.time[i]}" disabled></td>
-              <td><button id="edit${i}" >Edit </button>  <button id="save${i}" class="d-none">Save </button></td>
+              <td><div class="input-group flex-nowrap">
+                    <span class="input-group-text" id="addon-wrapping">HH:mm</span>
+                    <input type="text" id="inputValue${i}" value="${data.time[i]}" class="form-control"  aria-label="Thứ ${i + 2}" aria-describedby="addon-wrapping" disabled>
+                  </div>
+              </td>
+              <td><button id="edit${i}" class="btn btn-light">Edit </button>  <button id="save${i}" class="d-none btn btn-success">Save </button> <button id="cancel${i}" class="d-none btn btn-danger">Cancel </button></td>
             `;
             tbody.appendChild(tr);
           } else {
             tr.innerHTML = `
               <th scope="row">Chủ nhật</th>
-              <td><input id="inputValue${i}" value="${data.time[i]}" disabled></td>
-              <td><button id="edit${i}" >Edit </button>  <button id="save${i}" class="d-none">Save </button></td>`;
+              <td><div class="input-group flex-nowrap">
+                    <span class="input-group-text" id="addon-wrapping">HH:mm</span>
+                    <input type="text" id="inputValue${i}" value="${data.time[i]}" class="form-control"  aria-label="Thứ ${i + 2}" aria-describedby="addon-wrapping" disabled>
+                  </div>
+              </td>
+              <td><button id="edit${i}" class="btn btn-light">Edit </button>  <button id="save${i}" class="d-none btn btn-success">Save </button> <button id="cancel${i}" class="d-none btn btn-danger">Cancel </button></td>`;
             tbody.appendChild(tr);
           }
         }
@@ -152,11 +162,13 @@
         const edits = document.querySelectorAll('[id^="edit"]');
         const saves = document.querySelectorAll('[id^="save"]');
         const inputValue = document.querySelectorAll('[id^="inputValue"]');
+        const cancels = document.querySelectorAll('[id^="cancel"]');
         edits.forEach((edit, index) => {
           edit.addEventListener('click', (e) => {
             e.preventDefault();
             console.log(index);
             saves[index].classList.remove('d-none');
+            cancels[index].classList.remove('d-none');
             inputValue[index].disabled = false;
           });
         });
@@ -166,6 +178,7 @@
             e.preventDefault();
             console.log(index);
             saves[index].classList.add('d-none');
+            cancels[index].classList.add('d-none');
             inputValue[index].disabled = true;
             //post the data back to server using fetch
             let url = "/changeTime" + "?" + window.location.href.split('?')[1];
@@ -187,6 +200,16 @@
               .catch((error) => {
                 console.error('Error:', error);
               });
+          });
+        });
+
+        cancels.forEach((cancel, index) => {
+          cancel.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log(index);
+            saves[index].classList.add('d-none');
+            cancels[index].classList.add('d-none');
+            inputValue[index].disabled = true;
           });
         });
       })
