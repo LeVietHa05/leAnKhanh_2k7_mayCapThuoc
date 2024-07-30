@@ -1,5 +1,16 @@
 [
   {
+    "username": "admin",
+    "password": "admin",
+    "role": "admin",
+    "name": "Nguyen Van Admin",
+    "khoang": 0,
+    "drugs": ["Vitacap ", "Eganin", "Thymodulin 80mg"],
+    "numofdrugs": [1, 1, 1],
+    "time": ["8:00", "14:00", "18:00", "22:00", "6:00", "10:00", "16:00"],
+    "uid": "4255969536"
+  },
+  {
     "username": "user1",
     "password": "user1",
     "role": "user",
@@ -7,7 +18,7 @@
     "khoang": 1,
     "drugs": ["Vitacap ", "Eganin", "Thymodulin 80mg"],
     "numofdrugs": [1, 3, 1],
-    "time": ["8:00,14:00", "12:00", "18:00", "22:00", "6:00", "10:00", "16:00"],
+    "time": ["8:00,14:00", "12:00", "18:00", "22:00", "6:00", "16:16", "16:00"],
     "_time": ["8:00", "12:00", "18:00", "22:00", "6:00", "10:00", "16:00"],
     "uid": "4255969536"
   },

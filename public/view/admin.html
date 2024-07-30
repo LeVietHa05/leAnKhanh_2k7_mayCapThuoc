@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thiết bị cấp thuốc thông minh</title>
+    <meta name="description" content="Thiết bị cấp thuốc thông minh">
+    <link rel="stylesheet" href="stylesheets/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous" />
+    <style>
+        html {
+            font-size: 18px;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(to bottom left, #f5bd2b, #dbef8d, #bcf166, #cfffee, #5bf3c6, #b5ffff);
+            background-repeat: no-repeat;
+        }
+
+        main {
+            backdrop-filter: blur(3px);
+            background: rgb(255, 255, 255, 0.8);
+            box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.23);
+        }
+    </style>
+</head>
+
+<body class="d-flex justify-content-center align-items-center">
+    <div class="container">
+        <main style="max-width: 1300px; min-height: 50vh; min-width: 600px" class="m-auto rounded-4 p-3">
+            <h1 class="text-center">Thiết bị cấp thuốc thông minh</h1>
+            <div id="hello_js" class="mb-3 h4">xin chao, user1 (placeholder)</div>
+            <div id="adminInfoTab">
+                <div>Lựa chọn bệnh nhân: </div>
+                <select class="form-select" name="patient" id="select_patient">
+                </select>
+                <button class="btn btn-primary" id="btn_select_pat"> Chọn</button>
+            </div>
+            <div id="patientInfoTab">
+                <div id="timeTable">
+                    <div class="h6">Lịch uống thuốc của bạn: (chỉ mang tính chất minh họa)</div>
+                    <table class="table table-striped table-hover" id="timeTable_js">
+                        <thead>
+                            <tr>
+                                <th scope="col">Thứ</th>
+                                <th scope="col">Giờ</th>
+                                <th scope="col">...</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div id="danhSachThuoc">
+                    <div class="h6">Trong lần uống thuốc này, bạn sẽ uống các loại thuốc sau: </div>
+                    (Lưu ý: chỉ mang tính chất minh họa)
+                    <ul id="listDrug_js">
+                        <li><b>Paracetamol</b></li>
+                        <li><b>Carbocistein 250mg</b></li>
+                        <li><b>Clorpheniramin 4mg</b></li>
+                    </ul>
+                </div>
+                <div id="tutorial">
+                    <div class="h6">Hướng dẫn lấy thuốc</div>
+                    <ul>
+                        <li>Thứ nhất: Sử dụng trang web này, nhấn vào <button type="button" id="btn_open_Khoang_js"
+                                class="btn btn-light">đây</button> và chờ một vài giây để máy cấp thuốc xoay đến ô của
+                            bạn.
+                        </li>
+                        <li>Thứ hai: Sử dụng bộ thẻ đã được cấp: Chạm thẻ vào vùng quét và chờ một vài giây để máy cấp
+                            thuốc
+                            xoay đến
+                            ô của bạn.</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
+        crossorigin="anonymous"></script>
+
+    <!-- socket -->
+    <script src="../socket.io/socket.io.js"></script>
+    <script>
+
+        let str = "";
+        var socket = io();
+
+        const control = {
+            open: 0,
+            khoang: 0,
+            changeKhoang: 0,
+            changeFingerPrint: 0,
+            changeCard: 0,
+        }
+
+        const btn_open_Khoang_js = document.querySelector('#btn_open_Khoang_js');
+        btn_open_Khoang_js.addEventListener('click', (e) => {
+            e.preventDefault();
+            control.open = 1;
+            // control.khoang = 1; //khoang da duoc cap nhat khi nguoi dung dang nhap
+            socket.emit("/esp/new-card-found", { uid: str });
+            // socket.emit("/web/control", { uid: str });
+            control.open = 0;
+        });
+
+        socket.on('connect', function () {
+            console.log('Connected!');
+        });
+
+
+        socket.on("message", (data) => {
+            console.log(data);
+        });
+
+        socket.on("/web/measure", (data) => {
+            console.log(data);
+        });
+    </script>
+    <!-- normal js -->
+    <script>
+        const select_patient = document.querySelector('#select_patient');
+        btn_select_pat.addEventListener("click", (e) => {
+            e.preventDefault();
+            // console.log(e.target.value);
+            let url = "/getusernumber" + "?" + select_patient.value;
+            // console.log(url);
+            getUserInfo(url);
+        })
+    </script>
+    <script>
+        const hello_js = document.querySelector('#hello_js');
+        const listDrug_js = document.querySelector('#listDrug_js');
+        const timeTable_js = document.querySelector('#timeTable_js');
+
+        let tempStr = window.location.href.split('?')[1];
+        let tempTime = new Date()
+        let url = "/getusernumber" + "?" + tempStr;
+        // console.log(url);
+        getUserInfo(url);
+        getPatientList();
+
+        function showData(data) {
+            str = data.uid;
+            hello_js.innerHTML = `Xin chào, ${data.name}!`;
+            control.khoang = data.khoang;
+            listDrug_js.innerHTML = "";
+            data.drugs.forEach(drug => {
+                listDrug_js.innerHTML += `<li><b>${drug}</b></li>`;
+            });
+            const tbody = document.createElement('tbody');
+            // console.log(data.time);
+            // console.log(data.time.length);
+            for (let i = 0; i < data.time.length; i++) {
+                const tr = document.createElement('tr');
+                if (i != 6) {
+                    tr.innerHTML = `
+              <th scope="row">Thứ ${i + 2}</th>
+              <td><div class="input-group flex-nowrap">
+                    <span class="input-group-text" id="addon-wrapping">HH:mm</span>
+                    <input type="text" id="inputValue${i}" value="${data.time[i]}" class="form-control"  aria-label="Thứ ${i + 2}" aria-describedby="addon-wrapping" disabled>
+                  </div>
+              </td>
+              <td><button id="edit${i}" class="btn btn-light">Edit </button>  <button id="save${i}" class="d-none btn btn-success">Save </button> <button id="cancel${i}" class="d-none btn btn-danger">Cancel </button></td>
+            `;
+                    tbody.appendChild(tr);
+                } else {
+                    tr.innerHTML = `
+              <th scope="row">Chủ nhật</th>
+              <td><div class="input-group flex-nowrap">
+                    <span class="input-group-text" id="addon-wrapping">HH:mm</span>
+                    <input type="text" id="inputValue${i}" value="${data.time[i]}" class="form-control"  aria-label="Thứ ${i + 2}" aria-describedby="addon-wrapping" disabled>
+                  </div>
+              </td>
+              <td><button id="edit${i}" class="btn btn-light">Edit </button>  <button id="save${i}" class="d-none btn btn-success">Save </button> <button id="cancel${i}" class="d-none btn btn-danger">Cancel </button></td>`;
+                    tbody.appendChild(tr);
+                }
+            }
+            timeTable_js.removeChild(timeTable_js.lastChild);
+            timeTable_js.appendChild(tbody);
+            const edits = document.querySelectorAll('[id^="edit"]');
+            const saves = document.querySelectorAll('[id^="save"]');
+            const inputValue = document.querySelectorAll('[id^="inputValue"]');
+            const cancels = document.querySelectorAll('[id^="cancel"]');
+
+            edits.forEach((edit, index) => {
+                edit.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log(index);
+                    saves[index].classList.remove('d-none');
+                    cancels[index].classList.remove('d-none');
+                    inputValue[index].disabled = false;
+                });
+            });
+
+            saves.forEach((save, index) => {
+                save.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log(index);
+                    saves[index].classList.add('d-none');
+                    cancels[index].classList.add('d-none');
+                    inputValue[index].disabled = true;
+                    //post the data back to server using fetch
+                    let url = "/changeTime" + "?" + window.location.href.split('?')[1];
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            uid: str,
+                            index: index,
+                            time: inputValue[index].value
+                        }),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Success:', data);
+                        })
+                        .catch((error) => {
+                            console.error('Error:', error);
+                        });
+                });
+            });
+
+            cancels.forEach((cancel, index) => {
+                cancel.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log(index);
+                    saves[index].classList.add('d-none');
+                    cancels[index].classList.add('d-none');
+                    inputValue[index].disabled = true;
+                });
+            });
+        }
+
+        function getUserInfo(url) {
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    // console.log(data);
+
+                    localStorage.setItem(tempStr, JSON.stringify(data));
+                    localStorage.setItem(`${tempStr}_time`, JSON.stringify(data));
+
+                    showData(data);
+                })
+        }
+
+        function getPatientList() {
+            fetch('/getPatientList')
+                .then(res => res.json())
+                .then(data => {
+                    // console.log(data);
+                    data.forEach(patient => {
+                        const option = document.createElement('option');
+                        option.value = `username=${patient.username}&password=${patient.password}`;
+                        option.innerHTML = patient.name;
+                        select_patient.appendChild(option);
+                    });
+                })
+        }
+    </script>
+</body>
+
+</html>

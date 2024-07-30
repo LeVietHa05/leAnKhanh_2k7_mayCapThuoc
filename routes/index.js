@@ -6,11 +6,13 @@ const users = JSON.parse(fs.readFileSync('user.json', 'utf8'));
 /* GET home page. */
 router.get('/', function (req, res, next) {
   const { username, password } = req.query;
-  let userNumber = getUserNumber(username, password);
-  if (userNumber == -1) {
+  let [user, userNumber] = getUserNumber(username, password);
+  if (userNumber == -1)
+    res.sendFile("/view/login.html", { root: 'public' })
+  if (user.role !== "admin") {
     res.sendFile("/view/login.html", { root: 'public' })
   } else {
-    res.sendFile("/view/index.html", { root: 'public' })
+    res.sendFile("/view/admin.html", { root: 'public' })
   }
 });
 
@@ -20,7 +22,7 @@ router.post("/changeTime", async (req, res) => {
   console.log(req.body);
   let { uid, index, time } = req.body;
   const { username, password } = req.query;
-  let userNumber = getUserNumber(username, password);
+  let [user, userNumber] = getUserNumber(username, password);
 
   users[userNumber].time[index] = time;
   fs.writeFileSync('user.json', JSON.stringify(users));
@@ -29,17 +31,27 @@ router.post("/changeTime", async (req, res) => {
 
 router.get("/getusernumber", (req, res) => {
   const { username, password } = req.query;
-  let userNumber = getUserNumber(username, password);
-  res.status(200).json(users[userNumber])
+  let [user, userNumber] = getUserNumber(username, password);
+  res.status(200).json(user)
+})
+
+router.get("/getPatientList", (req, res) => {
+  let userList = [];
+  users.forEach(user => {
+    if (user.role === "user") {
+      userList.push(user);
+    }
+  })
+  res.status(200).json(userList);
 })
 
 function getUserNumber(username, password) {
   for (let i = 0; i < users.length; i++) {
     if (users[i].username === username && users[i].password === password) {
-      return i;
+      return [users[i], i];
     }
   }
-  return -1
+  return [null, -1]
 }
 
 module.exports = router;

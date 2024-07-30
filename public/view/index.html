@@ -117,26 +117,36 @@
     const hello_js = document.querySelector('#hello_js');
     const listDrug_js = document.querySelector('#listDrug_js');
     const timeTable_js = document.querySelector('#timeTable_js');
-    let url = "/getusernumber" + "?" + window.location.href.split('?')[1];
+
+    let tempStr = window.location.href.split('?')[1];
+    let tempTime = new Date()
+    let url = "/getusernumber" + "?" + tempStr;
     console.log(url);
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        console.log(data);
-        str = data.uid;
-        hello_js.innerHTML = `Xin chào, ${data.name}!`;
-        control.khoang = data.khoang;
-        listDrug_js.innerHTML = "";
-        data.drugs.forEach(drug => {
-          listDrug_js.innerHTML += `<li><b>${drug}</b></li>`;
-        });
-        const tbody = document.createElement('tbody');
-        console.log(data.time);
-        console.log(data.time.length);
-        for (let i = 0; i < data.time.length; i++) {
-          const tr = document.createElement('tr');
-          if (i != 6) {
-            tr.innerHTML = `
+    if (localStorage.getItem(`${tempStr}`) == null) {
+      getUserInfo(url);
+    } else {
+      if (tempTime - localStorage.getItem(`${tempStr}_time`) > 86400000) {
+        getUserInfo(url);
+      } else {
+        let data = JSON.parse(localStorage.getItem(`${tempStr}`));
+      }
+    }
+
+    function showData(data) {
+      str = data.uid;
+      hello_js.innerHTML = `Xin chào, ${data.name}!`;
+      control.khoang = data.khoang;
+      listDrug_js.innerHTML = "";
+      data.drugs.forEach(drug => {
+        listDrug_js.innerHTML += `<li><b>${drug}</b></li>`;
+      });
+      const tbody = document.createElement('tbody');
+      // console.log(data.time);
+      // console.log(data.time.length);
+      for (let i = 0; i < data.time.length; i++) {
+        const tr = document.createElement('tr');
+        if (i != 6) {
+          tr.innerHTML = `
               <th scope="row">Thứ ${i + 2}</th>
               <td><div class="input-group flex-nowrap">
                     <span class="input-group-text" id="addon-wrapping">HH:mm</span>
@@ -145,9 +155,9 @@
               </td>
               <td><button id="edit${i}" class="btn btn-light">Edit </button>  <button id="save${i}" class="d-none btn btn-success">Save </button> <button id="cancel${i}" class="d-none btn btn-danger">Cancel </button></td>
             `;
-            tbody.appendChild(tr);
-          } else {
-            tr.innerHTML = `
+          tbody.appendChild(tr);
+        } else {
+          tr.innerHTML = `
               <th scope="row">Chủ nhật</th>
               <td><div class="input-group flex-nowrap">
                     <span class="input-group-text" id="addon-wrapping">HH:mm</span>
@@ -155,65 +165,80 @@
                   </div>
               </td>
               <td><button id="edit${i}" class="btn btn-light">Edit </button>  <button id="save${i}" class="d-none btn btn-success">Save </button> <button id="cancel${i}" class="d-none btn btn-danger">Cancel </button></td>`;
-            tbody.appendChild(tr);
-          }
+          tbody.appendChild(tr);
         }
-        timeTable_js.appendChild(tbody);
-        const edits = document.querySelectorAll('[id^="edit"]');
-        const saves = document.querySelectorAll('[id^="save"]');
-        const inputValue = document.querySelectorAll('[id^="inputValue"]');
-        const cancels = document.querySelectorAll('[id^="cancel"]');
-        edits.forEach((edit, index) => {
-          edit.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log(index);
-            saves[index].classList.remove('d-none');
-            cancels[index].classList.remove('d-none');
-            inputValue[index].disabled = false;
-          });
+      }
+      timeTable_js.appendChild(tbody);
+      const edits = document.querySelectorAll('[id^="edit"]');
+      const saves = document.querySelectorAll('[id^="save"]');
+      const inputValue = document.querySelectorAll('[id^="inputValue"]');
+      const cancels = document.querySelectorAll('[id^="cancel"]');
+      
+      edits.forEach((edit, index) => {
+        edit.addEventListener('click', (e) => {
+          e.preventDefault();
+          console.log(index);
+          saves[index].classList.remove('d-none');
+          cancels[index].classList.remove('d-none');
+          inputValue[index].disabled = false;
         });
+      });
 
-        saves.forEach((save, index) => {
-          save.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log(index);
-            saves[index].classList.add('d-none');
-            cancels[index].classList.add('d-none');
-            inputValue[index].disabled = true;
-            //post the data back to server using fetch
-            let url = "/changeTime" + "?" + window.location.href.split('?')[1];
-            fetch(url, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                uid: str,
-                index: index,
-                time: inputValue[index].value
-              }),
+      saves.forEach((save, index) => {
+        save.addEventListener('click', (e) => {
+          e.preventDefault();
+          console.log(index);
+          saves[index].classList.add('d-none');
+          cancels[index].classList.add('d-none');
+          inputValue[index].disabled = true;
+          //post the data back to server using fetch
+          let url = "/changeTime" + "?" + window.location.href.split('?')[1];
+          fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              uid: str,
+              index: index,
+              time: inputValue[index].value
+            }),
+          })
+            .then(response => response.json())
+            .then(data => {
+              console.log('Success:', data);
             })
-              .then(response => response.json())
-              .then(data => {
-                console.log('Success:', data);
-              })
-              .catch((error) => {
-                console.error('Error:', error);
-              });
-          });
+            .catch((error) => {
+              console.error('Error:', error);
+            });
         });
+      });
 
-        cancels.forEach((cancel, index) => {
-          cancel.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log(index);
-            saves[index].classList.add('d-none');
-            cancels[index].classList.add('d-none');
-            inputValue[index].disabled = true;
-          });
+      cancels.forEach((cancel, index) => {
+        cancel.addEventListener('click', (e) => {
+          e.preventDefault();
+          console.log(index);
+          saves[index].classList.add('d-none');
+          cancels[index].classList.add('d-none');
+          inputValue[index].disabled = true;
         });
-      })
+      });
+    }
 
+    function getUserInfo(url) {
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          console.log(data);
+
+          localStorage.setItem(tempStr, JSON.stringify(data));
+          localStorage.setItem(tempStr, JSON.stringify(data));
+
+          showData(data);
+        })
+
+
+    }
   </script>
 </body>
 
