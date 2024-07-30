@@ -41,6 +41,12 @@
                 <select class="form-select" name="patient" id="select_patient">
                 </select>
                 <button class="btn btn-primary" id="btn_select_pat"> Chọn</button>
+                <button class="btn btn-success" id="btn_create_pat" disabled style="display: none;"> tao moi</button>
+                <div style="width: 50%; max-width: 800px; min-width: 400px; margin: auto; display: none;" id="input_create_pat">
+                    <input class="form-control" type="text" placeholder="Tên bệnh nhân">
+                    <input class="form-control" type="number" placeholder="Số điện thoại">
+                    <input class="form-control" type="number" placeholder="UID">
+                </div>
             </div>
             <div id="patientInfoTab">
                 <div id="timeTable">
@@ -133,6 +139,10 @@
             let url = "/getusernumber" + "?" + select_patient.value;
             // console.log(url);
             getUserInfo(url);
+        })
+        btn_create_pat.addEventListener("click", (e) => {
+            e.preventDefault();
+            input_create_pat.style.display = "block";
         })
     </script>
     <script>
