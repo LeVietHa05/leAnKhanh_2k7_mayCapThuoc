@@ -1,5 +1,6 @@
 var express = require('express');
 const fs = require('fs');
+const schedule = require('../schedule.js');
 var router = express.Router();
 
 const users = JSON.parse(fs.readFileSync('user.json', 'utf8'));
@@ -7,9 +8,11 @@ const users = JSON.parse(fs.readFileSync('user.json', 'utf8'));
 router.get('/', function (req, res, next) {
   const { username, password } = req.query;
   let [user, userNumber] = getUserNumber(username, password);
+  console.log(userNumber);
+  console.log(user);
   if (userNumber == -1)
     res.sendFile("/view/login.html", { root: 'public' })
-  if (user.role !== "admin") {
+  else if (user.role !== "admin") {
     res.sendFile("/view/login.html", { root: 'public' })
   } else {
     res.sendFile("/view/admin.html", { root: 'public' })
@@ -26,6 +29,8 @@ router.post("/changeTime", async (req, res) => {
 
   users[userNumber].time[index] = time;
   fs.writeFileSync('user.json', JSON.stringify(users));
+  schedule.cancelAllJobs();
+  schedule.createSchedule(users);
   res.status(200).json({ message: "success" });
 })
 

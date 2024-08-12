@@ -42,7 +42,8 @@
                 </select>
                 <button class="btn btn-primary" id="btn_select_pat"> Chọn</button>
                 <button class="btn btn-success" id="btn_create_pat" disabled style="display: none;"> tao moi</button>
-                <div style="width: 50%; max-width: 800px; min-width: 400px; margin: auto; display: none;" id="input_create_pat">
+                <div style="width: 50%; max-width: 800px; min-width: 400px; margin: auto; display: none;"
+                    id="input_create_pat">
                     <input class="form-control" type="text" placeholder="Tên bệnh nhân">
                     <input class="form-control" type="number" placeholder="Số điện thoại">
                     <input class="form-control" type="number" placeholder="UID">
@@ -127,6 +128,9 @@
         });
 
         socket.on("/web/measure", (data) => {
+            console.log(data);
+        });
+        socket.on("/esp/new-card-found", (data) => {
             console.log(data);
         });
     </script>
