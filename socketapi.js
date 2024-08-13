@@ -5,6 +5,7 @@ const option = {
     allowEIO3: true,
     cors: {
         origin: "*",
+        cors_allowed_origins: "*",
         methods: ["GET", "POST"],
         transports: ["websocket", "polling"],
         credentials: true,
@@ -26,7 +27,7 @@ fs.watchFile('user.json', (curr, prev) => {
 
 io.on("connection", (socket) => {
     console.log("[INFO] new connection: [" + socket.id + "]");
-    socket.on("message", (data) => {
+    socket.on("/esp/got-person", (data) => {
         console.log(`message from ${data.clientID ? data.clientID : 'esp'} via socket id: ${socket.id} on topic message`);
         socket.broadcast.emit("message", data);
     });
@@ -43,7 +44,7 @@ io.on("connection", (socket) => {
         if (user) {
             let stringToSend = getStringToSend(user);
             console.log(stringToSend);
-            socket.broadcast.emit("/esp/new-card-found-done", { stringToSend: stringToSend });
+            io.emit("/esp/new-card-found-done", { stringToSend: stringToSend });
         } else {
             console.log("User not found");
         }
